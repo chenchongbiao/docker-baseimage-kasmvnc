@@ -45,7 +45,7 @@ To install cjk fonts on startup as an example pass the environment variables(Alp
 
 ```
 -e DOCKER_MODS=linuxserver/mods:universal-package-install
--e INSTALL_PACKAGES=font-noto-cjk
+-e INSTALL_PACKAGES=fonts-noto-cjk
 -e LC_ALL=zh_CN.UTF-8
 ```
 
