@@ -28,7 +28,7 @@ RUN \
   mkdir Downloads
 
 
-FROM chenchongbiao/baseimage-deepin:beige AS buildstage
+FROM chenchongbiao/baseimage-deepin:apricot AS buildstage
 
 ARG KASMVNC_RELEASE="511e2ae542e95f5447a0a145bb54ced968e6cfec"
 
@@ -37,13 +37,10 @@ COPY --from=wwwstage /build-out /www
 RUN \
   echo "**** install build deps ****" && \
   apt-get update && \
-  curl -o console-data.deb -L http://deb.debian.org/debian/pool/main/c/console-data/console-data_1.12-9_all.deb && \
-  curl -o tightvncserver.deb -L http://deb.debian.org/debian/pool/main/t/tightvnc/tightvncserver_1.3.10-7_amd64.deb && \
-  curl -o tightvncpasswd.deb -L http://deb.debian.org/debian/pool/main/t/tightvnc/tightvncpasswd_1.3.10-7_amd64.deb && \
-  apt-get install -y ./console-data.deb ./tightvncpasswd.deb ./tightvncserver.deb && \
   apt-get build-dep -y \
     libxfont-dev \
     xorg-server && \
+  DEBIAN_FRONTEND=noninteractive \
   apt-get install -y \
     autoconf \
     automake \
@@ -191,7 +188,7 @@ RUN \
   rm -Rf /build-out/usr/local/man
 
 # nodejs builder
-FROM chenchongbiao/baseimage-deepin:beige AS nodebuilder
+FROM chenchongbiao/baseimage-deepin:apricot AS nodebuilder
 ARG KCLIENT_RELEASE
 
 RUN \
@@ -230,7 +227,7 @@ RUN \
   rm -f package-lock.json
 
 # runtime stage
-FROM chenchongbiao/baseimage-deepin:beige
+FROM chenchongbiao/baseimage-deepin:apricot
 
 # set version label
 ARG BUILD_DATE
@@ -257,15 +254,9 @@ COPY --from=buildstage /build-out/ /
 RUN \
   echo "**** install deps ****" && \
   curl -fsSL https://download.docker.com/linux/debian/gpg | tee /usr/share/keyrings/docker.asc >/dev/null && \
-  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/debian bookworm stable" > /etc/apt/sources.list.d/docker.list && \
+  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker.asc] https://download.docker.com/linux/debian bullseye stable" > /etc/apt/sources.list.d/docker.list && \
   curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
   apt-get update && \
-  curl -o xserver-xorg-video-qxl.deb -L http://deb.debian.org/debian/pool/main/x/xserver-xorg-video-qxl/xserver-xorg-video-qxl_0.1.5%2bgit20200331-3_amd64.deb && \
-  curl -o console-data.deb -L http://deb.debian.org/debian/pool/main/c/console-data/console-data_1.12-9_all.deb && \
-  curl -o dunst.deb -L http://deb.debian.org/debian/pool/main/d/dunst/dunst_1.9.0-0.1_amd64.deb && \
-  curl -o libhash-merge-simple-perl.deb -L http://deb.debian.org/debian/pool/main/libh/libhash-merge-simple-perl/libhash-merge-simple-perl_0.051-3_all.deb && \
-  rm ./*.deb && \
-  apt-get install -y ./xserver-xorg-video-qxl.deb ./console-data.deb ./dunst.deb ./libhash-merge-simple-perl.deb && \
   DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
     ca-certificates \
     containerd.io \
@@ -305,7 +296,7 @@ RUN \
     libtasn1-6 \
     libtry-tiny-perl \
     libvulkan1 \
-    libwebp7 \
+    libwebp6 \
     libx11-6 \
     libxau6 \
     libxcb1 \

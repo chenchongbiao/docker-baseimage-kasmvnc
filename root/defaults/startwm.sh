@@ -7,4 +7,4 @@ if which nvidia-smi; then
   export GALLIUM_DRIVER=zink
 fi
 
-/usr/bin/openbox-session
+/usr/bin/startdde
